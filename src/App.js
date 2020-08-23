@@ -5,6 +5,9 @@ import Dialog from "./components/Modal/Dialog";
 
 const Image = styled.img`
   cursor: pointer;
+  width: 200px;
+  height: 200px;
+  /* margin: 10px 5px; */
 `;
 
 function App() {
