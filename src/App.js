@@ -19,6 +19,7 @@ function App() {
 
   const sliderConfig = {
     slidesToShow: 4,
+    slidesToScroll: 4,
   };
 
   useEffect(() => {

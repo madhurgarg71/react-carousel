@@ -22,17 +22,18 @@ const NavButtonNext = styled.button`
 `;
 
 export default function Slider(props) {
-  const { children, slidesToShow } = props;
+  const itemWidth = 150;
+  const { children, slidesToShow, slidesToScroll } = props;
   const [transLateAmount, setTranslateAmount] = useState(0);
   const [sliderWrapperWidth, setSliderWrapperWidth] = useState(0);
   const [sliderContentWidth, setSliderContentWidth] = useState(0);
 
   useEffect(() => {
-    setSliderContentWidth(150 * React.Children.count(children));
+    setSliderContentWidth(itemWidth * React.Children.count(children));
   }, [children]);
 
   useEffect(() => {
-    const width = slidesToShow * 150;
+    const width = slidesToShow * itemWidth;
     if (width > window.innerWidth) {
       setSliderWrapperWidth(window.innerWidth);
     } else {
@@ -42,12 +43,12 @@ export default function Slider(props) {
 
   const prevSlide = () => {
     if (transLateAmount === 0) return;
-    setTranslateAmount((prev) => prev + 150);
+    setTranslateAmount((prev) => prev + itemWidth * slidesToScroll);
   };
 
   const nextSlide = () => {
-    if (transLateAmount === sliderWrapperWidth - sliderContentWidth) return;
-    setTranslateAmount((prev) => prev - 150);
+    if (transLateAmount <= sliderWrapperWidth - sliderContentWidth) return;
+    setTranslateAmount((prev) => prev - itemWidth * slidesToScroll);
   };
 
   return (
