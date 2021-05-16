@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 
 const NavButtonCSS = css`
@@ -21,20 +21,20 @@ const NavButtonNext = styled.button`
   right: 0;
 `;
 
-const refs = {};
-
 export default function Slider(props) {
   const [avgWidth, setAvgWidth] = useState(0);
   const { children, slidesToShow, slidesToScroll } = props;
   const [transLateAmount, setTranslateAmount] = useState(0);
   const [sliderWrapperWidth, setSliderWrapperWidth] = useState(0);
   const [sliderContentWidth, setSliderContentWidth] = useState(0);
+  const refs = useRef({});
 
   const refsLen = Object.keys(refs).length;
+  const childrenCount = React.Children.count(children);
 
   useEffect(() => {
-    setSliderContentWidth(avgWidth * React.Children.count(children));
-  }, [children, avgWidth]);
+    setSliderContentWidth(avgWidth * childrenCount);
+  }, [childrenCount, avgWidth]);
 
   useEffect(() => {
     const width = slidesToShow * avgWidth;
@@ -56,13 +56,13 @@ export default function Slider(props) {
   };
 
   useEffect(() => {
-    const avgWidth = Object.entries(refs).reduce((acc, [_, ref]) => {
+    const avgWidth = Object.entries(refs.current).reduce((acc, [_, ref]) => {
       const imgDimension = ref.childNodes[0].getBoundingClientRect();
-      return acc + imgDimension.width / React.Children.count(children);
+      return Math.floor(acc + imgDimension.width / childrenCount);
     }, 0);
 
     setAvgWidth(avgWidth);
-  }, [refsLen, children]);
+  }, [refsLen, childrenCount]);
 
   return (
     <Slider.Wrapper width={sliderWrapperWidth}>
@@ -76,8 +76,12 @@ export default function Slider(props) {
             key: index,
           });
 
+          //not able to attach ref on children directly
           return (
-            <Slider.Slide width={avgWidth} ref={(node) => (refs[index] = node)}>
+            <Slider.Slide
+              width={avgWidth}
+              ref={(node) => (refs.current[index] = node)}
+            >
               {$el}
             </Slider.Slide>
           );
